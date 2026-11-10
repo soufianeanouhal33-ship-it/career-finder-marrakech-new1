@@ -572,7 +572,7 @@ def page_carte():
     # Centre dynamique sur les points
     center_lat, center_lng = float(pts["latitude"].mean()), float(pts["longitude"].mean())
     zoom = 12 if len(pts) < 50 else 11
-    m = folium.Map(location=[center_lat, center_lng], zoom_start=zoom, tiles="CartoDB.dark_matter", attr="© OpenStreetMap contributors, © CARTO")
+    m = folium.Map(location=[center_lat, center_lng], zoom_start=zoom, tiles="OpenStreetMap")
     folium.CircleMarker(location=[31.6295, -7.9811], radius=5000, color="#0d9488", fill=True, fill_color="#0d9488", fill_opacity=0.05, tooltip="Marrakech").add_to(m)
     for _, o in pts.iterrows():
         site = str(o.get("site_web") or "")
