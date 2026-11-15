@@ -73,8 +73,17 @@ def clean_excel_opportunities(file_path_or_buffer, only_it_ai: bool = True):
     report["sans_nom_supprimees"] = report["lignes_lues"] - len(df)
 
     # 2. Normalisation des champs
+    # Colonnes recalculées par ce module : on ignore celles du fichier (par ex. un
+    # export de l'app) sinon le concat du scoring crée des colonnes en double.
+    df = df.drop(columns=[c for c in ("score_opportunite", "mots_cles") if c in df.columns])
+    df = df.loc[:, ~df.columns.duplicated()]
+
     df["entreprise"] = df["entreprise"].apply(_normalize_name)
-    df["type"] = df["type"].astype(str).str.strip() if "type" in df.columns else ""
+    df["type"] = df["type"].fillna("").astype(str).str.strip() if "type" in df.columns else ""
+    # Si "type" est vide, on utilise la colonne "secteur" (ex: Informatique) pour le filtre IT / IA
+    if "secteur" in df.columns:
+        sec = df["secteur"].fillna("").astype(str).str.strip()
+        df["type"] = df["type"].where(df["type"] != "", sec)
     df["adresse"] = df["adresse"].fillna("").astype(str).str.strip() if "adresse" in df.columns else ""
     df["note"] = pd.to_numeric(df["note"], errors="coerce").fillna(0.0) if "note" in df.columns else 0.0
     if "lat" not in df.columns:
