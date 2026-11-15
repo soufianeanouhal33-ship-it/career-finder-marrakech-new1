@@ -65,6 +65,19 @@ from pipeline.google_places import fetch_it_companies_google
 from pipeline.sectors import SECTEURS, _normalize
 
 init_db()
+SEED_FILE = Path(__file__).parent / "seed" / "import_entreprises.xlsx"
+
+def seed_if_empty():
+    if not SEED_FILE.exists():
+        return
+    conn = get_connection()
+    n = conn.execute("SELECT COUNT(*) FROM opportunities").fetchone()[0]
+    conn.close()
+    if n == 0:
+        df, _, _ = clean_excel_opportunities(SEED_FILE, only_it_ai=False)
+        upsert_opportunities(df, added_by="")
+
+seed_if_empty()
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY", "")
 ALLOW_REGISTRATION = os.getenv("ALLOW_REGISTRATION", "true").lower() in ("1", "true", "yes")
