@@ -57,10 +57,7 @@ def clean_excel_opportunities(file_path_or_buffer, only_it_ai: bool = True):
     """
     raw = pd.read_excel(file_path_or_buffer)
     raw.columns = [str(c).strip().lower() for c in raw.columns]
-    ALIASES = {
-    "latitude": "lat", "lat.": "lat",
-    "longitude": "lon", "lng": "lon", "long": "lon", "lon.": "lon",
-}
+  
 raw = raw.rename(columns=ALIASES)
 
     if "entreprise" not in raw.columns:
