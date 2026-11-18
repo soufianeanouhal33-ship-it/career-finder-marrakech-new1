@@ -711,7 +711,7 @@ def page_statistiques():
             data = {"Avec e-mail": s["presence_numerique"]["avec_email"], "Sans e-mail": s["presence_numerique"]["sans_email"],
                     "Avec site web": s["presence_numerique"]["avec_site_web"], "Sans site web": s["presence_numerique"]["sans_site_web"]}
             df = pd.DataFrame({"catégorie": list(data.keys()), "valeur": list(data.values())})
-            st.bar_chart(df.set_index("catégorie"), color="#6366f1")
+            st.pyplot(_pie_fig(df))
     with c2:
         with st.container(border=True):
             st.markdown("#### Offres par type de contrat")
