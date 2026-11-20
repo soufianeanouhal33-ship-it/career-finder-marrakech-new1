@@ -670,12 +670,31 @@ def _chart_from_dict(title, data_dict, chart_type="bar"):
     else:
         st.pyplot(_pie_fig(df))
 
+import matplotlib.pyplot as plt
+import pandas as pd
+
 def _pie_fig(df):
-    import matplotlib.pyplot as plt
-    fig, ax = plt.subplots()
-    ax.pie(df["valeur"], labels=df["catégorie"], autopct="%1.0f%%", colors=PALETTE[:len(df)], textprops={"fontsize": 8})
-    ax.axis("equal")
-    fig.tight_layout()
+    fig, ax = plt.subplots(figsize=(4, 4))
+
+    # Nettoyer les valeurs : convertir en nombre, remplacer NaN par 0
+    df = df.copy()
+    df["valeur"] = pd.to_numeric(df["valeur"], errors="coerce").fillna(0)
+
+    # Garder uniquement les valeurs > 0
+    df = df[df["valeur"] > 0]
+
+    if df.empty:
+        ax.text(0.5, 0.5, "Aucune donnée disponible", ha="center", va="center", fontsize=10)
+        ax.axis("off")
+        return fig
+
+    ax.pie(
+        df["valeur"],
+        labels=df["catégorie"],
+        autopct="%1.0f%%",
+        colors=PALETTE[:len(df)],
+        textprops={"fontsize": 8},
+    )
     return fig
 
 def page_statistiques():
